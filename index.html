@@ -26,7 +26,7 @@
         <link rel="stylesheet" href="css/style.css">
     </head>
     <body>
-        <div class="page-main">
+        <div class="page-main" id="pageMain">
             <div class="bottom-line">
                 <div class="wrap header__wrap">
                     <header>
@@ -34,7 +34,7 @@
                             <a href="#" class="header__logo"></a>
                             <button class="btn-menu"></button>
                             <ul class="header-nav">
-                                <li class="header-nav__item header-nav__item_active"><a class="link" href="#">Home</a></li>
+                                <li class="header-nav__item header-nav__item_active"><a class="link header-nav__link" href="#pageMain">Home</a></li>
                                 <li class="header-nav__item"><a class="link header-nav__link" href="#pageAbout">Pages</a></li>
                                 <li class="header-nav__item"><a class="link header-nav__link" href="#pageNews">Features</a></li>
                                 <li class="header-nav__item"><a class="link header-nav__link" href="#pageBlog">Extensions</a></li>
@@ -251,7 +251,7 @@
                             document.getElementById('map'), {                                
                                 zoom: 16,
                                 center: location,
-                                styles:[ {"elementType": "geometry", "stylers": [ {"color": "#212121"}]},
+                                styles:[ {"elementType": "geometry", "stylers": [ {"color": "#212121"}]},                                        
                                          {"elementType": "labels", "stylers": [{"visibility": "off"}]},
                                          {"elementType": "labels.icon", "stylers": [{"visibility": "off"}]},
                                          {"elementType": "labels.text.fill", "stylers": [{"color": "#757575"}]},
@@ -322,12 +322,12 @@
         <div class="modal">
             <button class="btn-close"><span class="cross-position">&times;</span></button>
             <ul class="header-nav header-nav_modal">
-                <li class="header-nav__item"><a class="link link_active" href="#">Home</a></li>
-                <li class="header-nav__item"><a class="link" href="#pageAbout">Pages</a></li>
-                <li class="header-nav__item"><a class="link" href="#pageNews">Features</a></li>
-                <li class="header-nav__item"><a class="link" href="#pageBlog">Extensions</a></li>
-                <li class="header-nav__item"><a class="link" href="#pageKeyfeature">Tutorials</a></li>
-                <li class="header-nav__item"><a class="link" href="#pageContact">Contact us</a></li>                            
+                <li class="header-nav__item"><a class="link header-nav__link_modal" href="#pageMain">Home</a></li>
+                <li class="header-nav__item"><a class="link header-nav__link_modal" href="#pageAbout">Pages</a></li>
+                <li class="header-nav__item"><a class="link header-nav__link_modal" href="#pageNews">Features</a></li>
+                <li class="header-nav__item"><a class="link header-nav__link_modal" href="#pageBlog">Extensions</a></li>
+                <li class="header-nav__item"><a class="link header-nav__link_modal" href="#pageKeyfeature">Tutorials</a></li>
+                <li class="header-nav__item"><a class="link header-nav__link_modal" href="#pageContact">Contact us</a></li>                            
                 <li class="header-nav__item">
                     <ul class="social social_modal">
                         <li class="social-item"><a class="link link_active" href="#" target="blank"><i class="fab fa-facebook-f"></i></a></li>
@@ -337,7 +337,8 @@
                     </ul>
                 </li>                            
             </ul>
-        </div>       
+        </div>
+        <button class="btn-up"><i class="fas fa-chevron-up"></i></button>       
         <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/jquery-migrate-3.0.1.min.js" integrity="sha256-F0O1TmEa4I8N24nY0bya59eP6svWcshqX1uzwaWC4F4=" crossorigin="anonymous"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -352,12 +353,49 @@
                     $(".btn-close").click(function(){
                         $(".modal").hide();
                         $(".btn-menu").show();
+                        $(".header-nav__link_modal").removeClass("link_active");
                     });
+                    // Обеспечение видимости кнопки "Scroll down" только в верхнем положении страницы при перезагрузке
+                    var windowScrollPosition = $(window).scrollTop();                   
+                    if (windowScrollPosition==0) {
+                        $(".box-scroll").css('display', 'block');
+                    }
+                    else {
+                        $(".box-scroll").css('display', 'none');
+                    }
+                    //------------------------------------------------------------------------------------------------
                     $(window).scroll(function(){
-                        $(".box-scroll").fadeOut();    
+                        var currentScrollPosition = $(window).scrollTop();                        
+                        if (currentScrollPosition==0) {
+                            $(".box-scroll").fadeIn();
+                        }
+                        else if (currentScrollPosition>=880) {
+                            $(".btn-up").fadeIn();
+                        }
+                        else {
+                            $(".box-scroll").fadeOut();
+                            $(".btn-up").hide();
+                        }
+                    });                    
+                    $(".box-scroll").click(function() {
+                        var topAbout = $("#pageAbout").offset().top;
+                        $('body,html').animate({scrollTop: topAbout}, 1500);
+                        $(".box-scroll").fadeOut(1000);
+                    });
+                    $(".header-nav__link, .header-nav__link_modal").click(function(event){
+                        event.preventDefault();
+                        $(".header-nav__link_modal").removeClass("link_active");
+                        $(this).addClass("link_active");                
+                        var pageId = $(this).attr('href');
+                        var pagePosition = $(pageId).offset().top;
+                        $('body, html').animate({scrollTop: pagePosition}, 1500);
+                    });
+                    $(".btn-up").click(function(){
+                        var positionTop = $("#pageMain").offset().top;
+                        $("body, html").animate({scrollTop: positionTop}, 1500);
                     });
                 });
-            </script>
+        </script>
         <script>                     
                 var slideIndex = 1;
                 showSlides(slideIndex);
